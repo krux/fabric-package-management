@@ -7,11 +7,10 @@ def _run_cmd(func, cmd, verbose):
     """
     Utility function to run commands respecting `use_sudo` and `verbose`.
     """
-    with shell_env(DEBIAN_FRONTEND='noninteractive'):
-        if verbose:
-            return func(cmd)
-        with settings(hide('everything')):
-            return func(cmd)
+    if verbose:
+        return func(cmd)
+    with settings(hide('everything')):
+        return func(cmd)
 
 
 def install(packages, assume_yes=True, no_install_recommends=False,
