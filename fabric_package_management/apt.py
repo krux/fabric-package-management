@@ -56,7 +56,7 @@ def install(packages, assume_yes=True, no_install_recommends=False,
     return _run_cmd(func, cmd, verbose)
 
 
-def update(use_sudo=True, verbose=True, source_name=None):
+def update(use_sudo=True, verbose=True, source_name=None, quiet=False):
     """
     Update Apt's package index files on the remote host.
 
@@ -68,6 +68,8 @@ def update(use_sudo=True, verbose=True, source_name=None):
     """
     func = use_sudo and sudo or run
     cmd = 'apt-get update'
+    if quiet:
+        cmd += ' -qq'
     if source_name is not None:
         cmd += " -o Dir::Etc::sourceparts='-' "
         cmd += "-o Dir::Etc::sourcelist='sources.list.d/{}.list'".format(source_name)
