@@ -57,6 +57,12 @@ class AptTest(unittest.TestCase):
             self.assertTrue(update.succeeded)
             self.assertEqual(update.command, 'apt-get update')
 
+            update = apt.update(use_sudo=False, verbose=False, quiet=True)
+            self.assertTrue(update.succeeded)
+            self.assertEqual(update.command, 'apt-get update -qq')
+
+            # this test/assertion should be last, as apt's list files will have *only*
+            # the specified repo after running `apt-get update` with a list file specified.
             update = apt.update(source_name=test_source)
             self.assertTrue(update.succeeded)
             self.assertEqual(update.command, test_update_command)
@@ -93,6 +99,9 @@ class AptTest(unittest.TestCase):
                       user='root',
                       password='functionaltests'):
 
+            # we need to run `apt-get update` here to ensure that the local package db is not
+            # in sync with what is in the repo at the moment.
+            apt.update()
             install = apt.install(['bpython', 'git'],
                                   no_install_recommends=True)
             self.assertTrue(install.succeeded)
@@ -147,6 +156,10 @@ class AptTest(unittest.TestCase):
         with settings(host_string=self.container_host,
                       user='root',
                       password='functionaltests'):
+
+            # we need to run `apt-get update` here to ensure that the local package db is not
+            # in sync with what is in the repo at the moment.
+            apt.update()
 
             build_dep = apt.build_dep('python-libcloud')
             self.assertTrue(build_dep.succeeded)
